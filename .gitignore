@@ -1,0 +1,13 @@
+.env
+.env.*
+!.env.example
+
+_star_doc_*.md
+_weekly_ppt_*.json
+_weekly_ppt_*.md
+.lark-slides/
+
+*.log
+.DS_Store
+__pycache__/
+.pytest_cache/

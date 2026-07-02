@@ -1,0 +1,16 @@
+{
+  "starred_at": "2026-07-02T10:00:00Z",
+  "repo": {
+    "full_name": "example/agent-toolkit",
+    "description": "A sample agent toolkit repository for Star-DART dry-run demos.",
+    "html_url": "https://github.com/example/agent-toolkit",
+    "language": "Python",
+    "stargazers_count": 128,
+    "forks_count": 12,
+    "license": {
+      "spdx_id": "MIT"
+    },
+    "created_at": "2025-12-01T00:00:00Z",
+    "updated_at": "2026-06-30T00:00:00Z"
+  }
+}
