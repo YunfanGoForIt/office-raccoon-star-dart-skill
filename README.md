@@ -2,7 +2,7 @@
 
 把 GitHub Star 从“收藏链接”变成“可检索、可复盘、可复用”的开源项目知识资产。
 
-本仓库是一套面向办公小浣熊运行的 Skill：由办公小浣熊定时执行脚本检查 GitHub 公开 Star 列表，发现新增仓库后生成项目文档，写入飞书目录、飞书多维表格和飞书仪表盘，并在每周生成一份 Star 收藏回顾 PPT。
+本仓库是一套面向办公小浣熊运行的 Skill：由办公小浣熊定时执行脚本检查 GitHub 公开 Star 列表，发现新增仓库后生成项目文档，写入飞书目录页下的多维表格和仪表盘，并在每周生成一份 Star 收藏回顾 PPT。
 
 ## 项目定位
 
@@ -15,7 +15,7 @@ GitHub Star 定时轮询
   ↓
 办公小浣熊生成项目文档
   ↓
-写入飞书目录页与飞书多维表格
+写入飞书目录页与目录页下的飞书多维表格
   ↓
 飞书仪表盘持续统计
   ↓
@@ -29,8 +29,8 @@ GitHub Star 定时轮询
 | 本轮仓库清单 | 小浣熊回复正文 | 只列出本轮新增 Star |
 | 项目文档 | 飞书目录页下的子文档 | 每个新增仓库一份，是核心产物 |
 | 目录入口 | 飞书目录页正文 | 追加项目文档和周回顾 PPT 链接 |
-| 资产台账 | 飞书多维表格 | 替代本地 Excel 台账 |
-| 仪表盘 | 飞书多维表格仪表盘 | 替代本地 HTML Dashboard |
+| 资产台账 | 飞书目录页下的多维表格子文档 | 替代本地 Excel 台账 |
+| 仪表盘 | 目录页下 Base 内的仪表盘 | 替代本地 HTML Dashboard |
 | 周回顾 PPT | 飞书目录页下的 Slides / PPT | 每周总结本周 Star 收藏 |
 
 默认不生成社群周报、xlsx、HTML Dashboard、docx 或 pdf。PPT 是周度回顾产物，不为每个 Star 单独生成。
@@ -77,9 +77,9 @@ cp .env.example .env
 | --- | --- |
 | `GITHUB_USERNAME` | 要检查公开 Star 列表的 GitHub 用户名 |
 | `GITHUB_TOKEN` | 可选，用于提高 GitHub API 限流额度 |
-| `STAR_DART_WIKI_PARENT_NODE_TOKEN` | 飞书目录页父级 Wiki node token |
+| `STAR_DART_WIKI_PARENT_NODE_TOKEN` | 飞书目录页 Wiki node token；项目文档、Base 和 PPT 都挂在它下面 |
 | `STAR_DART_DIRECTORY_DOC_TOKEN` | 飞书目录页 doc token |
-| `STAR_DART_BASE_TOKEN` | 飞书多维表格 base token |
+| `STAR_DART_BASE_TOKEN` | 飞书多维表格 base token；该 Base 应是目录页下的子节点 |
 | `STAR_DART_BASE_TABLE_ID` | 飞书多维表格 table id |
 | `STAR_DART_BASE_DASHBOARD_ID` | 飞书多维表格仪表盘 id |
 | `STAR_DART_POLL_INTERVAL_SECONDS` | 轮询周期，默认 `10800` 秒 |
@@ -154,8 +154,9 @@ python3 scripts/check_new_stars.py
 1. 参考 `references/doc_template.md` 为每个仓库生成项目文档。
 2. 使用 `lark-cli` 在飞书目录页下创建子文档。
 3. 在目录页正文追加项目文档入口。
-4. 写入或更新飞书多维表格资产台账。
-5. 确认飞书多维表格仪表盘可展示项目总数、技术方向分布、推荐动作分布和复用等级分布。
+4. 确认飞书多维表格资产台账是目录页下的 `bitable` 子节点。
+5. 写入或更新飞书多维表格资产台账。
+6. 确认该 Base 内的仪表盘可展示项目总数、技术方向分布、推荐动作分布和复用等级分布。
 
 每周回顾时，办公小浣熊参考 `references/weekly_ppt_template.md` 生成 6-8 页 PPT，并把 PPT 放入同一个飞书目录页下，同时追加目录入口。
 
@@ -173,5 +174,6 @@ python3 -m unittest discover -s tests
 
 - GitHub Star 不会自动唤醒小浣熊；本项目使用定时轮询。
 - 飞书 Base 是去重事实来源，不使用本地状态文件替代 Base。
+- 飞书 Base 应作为目录页下的多维表格子文档存在，不应散落在目录之外。
 - 项目文档不是 README 翻译，而是围绕“为什么值得 Star、如何复用、有什么风险”做结构化研判。
 - 不把规划中的云服务、MCP 网络或商业化能力说成当前已完成能力。

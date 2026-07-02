@@ -5,7 +5,7 @@ description: 在办公小浣熊中运行的 Star-DART OPC 专用 Skill。把 Git
 
 # Office Raccoon Star-DART Skill
 
-本 Skill 运行在办公小浣熊里。它只做 Star-DART OPC 复赛演示真正需要的闭环：**新增 Star → 项目文档 → 飞书目录 → Base 台账/仪表盘 → 每周 PPT 回顾**。
+本 Skill 运行在办公小浣熊里。它只做 Star-DART OPC 复赛演示真正需要的闭环：**新增 Star → 项目文档 → 飞书目录 → 目录页下的 Base 台账/仪表盘 → 每周 PPT 回顾**。
 
 ## 安全配置
 
@@ -17,10 +17,10 @@ description: 在办公小浣熊中运行的 Star-DART OPC 专用 Skill。把 Git
 | --- | --- |
 | `GITHUB_USERNAME` | 要检查公开 Star 列表的 GitHub 用户名 |
 | `GITHUB_TOKEN` | 可选；用于提高 GitHub API 限流额度，读取公开 Star 不强制需要 |
-| `STAR_DART_WIKI_PARENT_NODE_TOKEN` | 飞书目录页对应的父级 Wiki node token，用于创建子文档或子节点 |
+| `STAR_DART_WIKI_PARENT_NODE_TOKEN` | 飞书目录页对应的 Wiki node token；项目文档、Base 子节点、周回顾 PPT 都必须挂在这个目录页下 |
 | `STAR_DART_DIRECTORY_DOC_URL` | 飞书目录页 URL，用于在目录正文追加条目 |
 | `STAR_DART_DIRECTORY_DOC_TOKEN` | 飞书目录页 doc token；如只有 URL，先用 `lark-cli wiki +node-get` 或 `docs +fetch` 解析 |
-| `STAR_DART_BASE_URL` | Star-DART 资产台账所在飞书 Base 链接；没有时可留空并新建 |
+| `STAR_DART_BASE_URL` | Star-DART 资产台账飞书 Base 链接；该 Base 必须是目录页下的多维表格子节点 |
 | `STAR_DART_BASE_TOKEN` | 已解析的 Base token；有 URL 时优先重新解析确认 |
 | `STAR_DART_BASE_TABLE_ID` | 资产台账表 ID |
 | `STAR_DART_BASE_DASHBOARD_ID` | Star-DART 仪表盘 ID；创建后写入 `.env`，便于更新看板 |
@@ -40,6 +40,7 @@ description: 在办公小浣熊中运行的 Star-DART OPC 专用 Skill。把 Git
 - 默认轮询周期为 3 小时，可由用户通过 `.env` 自行调整。
 - 当前小浣熊定时任务用于演示计划执行。
 - 发现新增 Star 后，小浣熊负责生成文档、写入飞书多维表格、维护仪表盘和目录页。
+- 飞书多维表格不是独立散落资源，必须作为 `.env` 指定目录页下的 `bitable` 子节点；仪表盘属于这个 Base。
 - 不设置 systemd、launchd、Windows Task Scheduler 等系统级服务；使用办公小浣熊自己的定时任务功能执行脚本。
 
 ## 定时任务脚本
@@ -91,8 +92,8 @@ python3 scripts/check_new_stars.py \
 | 仓库清单 | 小浣熊回复正文 | 只列出本轮新增仓库，方便用户快速确认 |
 | 项目文档 | 飞书目录页下的子文档 | 每个 Star 仓库一份文档，是最重要的产物 |
 | 目录条目 | 飞书目录页正文 | 追加项目文档链接，保持目录可浏览 |
-| 资产台账 | 飞书多维表格 | 替代本地 Excel，不默认生成 xlsx |
-| 仪表盘 | 飞书多维表格仪表盘 | 替代本地 HTML data-dashboard |
+| 资产台账 | 飞书目录页下的多维表格子节点 | 替代本地 Excel，不默认生成 xlsx |
+| 仪表盘 | 目录页下 Base 内的仪表盘 | 替代本地 HTML data-dashboard |
 
 ### 每周回顾输出
 
@@ -206,7 +207,7 @@ lark-cli docs +update \
 
 ### 4. 写入飞书多维表格资产台账
 
-资产台账使用飞书多维表格，不再使用 Excel。
+资产台账使用飞书多维表格，不再使用 Excel。该多维表格必须挂在飞书目录页下，和项目文档、周回顾 PPT 一起成为目录页的子节点。
 
 如果用户已经提供 Base 链接或 token，先解析真实 `base_token`、`table_id`：
 
@@ -215,7 +216,33 @@ lark-cli skills read lark-base
 lark-cli base +url-resolve --url "$STAR_DART_BASE_URL" --as user
 ```
 
-如果需要新建 Base：
+解析后必须确认 Base 的 Wiki 父节点就是目录页。若 Base 已存在但不在目录页下，先把它迁入目录页：
+
+```bash
+# 先解析目录页所属 space_id；不要猜 space_id
+lark-cli wiki +node-get \
+  --as user \
+  --node-token "$STAR_DART_DIRECTORY_DOC_URL"
+
+lark-cli wiki +move \
+  --as user \
+  --obj-type bitable \
+  --obj-token "$STAR_DART_BASE_TOKEN" \
+  --target-space-id "<目录页 space_id>" \
+  --target-parent-token "$STAR_DART_WIKI_PARENT_NODE_TOKEN"
+```
+
+如果需要新建 Base，优先直接在目录页下创建多维表格子节点；创建后把返回的 `obj_token` 写入 `.env` 的 `STAR_DART_BASE_TOKEN`：
+
+```bash
+lark-cli wiki +node-create \
+  --as user \
+  --parent-node-token "$STAR_DART_WIKI_PARENT_NODE_TOKEN" \
+  --obj-type bitable \
+  --title "Star-DART OPC 开源项目资产台账"
+```
+
+如需一次性指定首表字段，也可先创建 Base，再立即用 `wiki +move` 迁入目录页：
 
 ```bash
 lark-cli skills read lark-base references/lark-base-field-json.md
@@ -269,7 +296,7 @@ lark-cli base +record-upsert \
 
 ### 5. 更新飞书多维表格仪表盘
 
-仪表盘使用飞书多维表格仪表盘，不再生成独立 HTML dashboard。
+仪表盘使用飞书多维表格仪表盘，不再生成独立 HTML dashboard。仪表盘必须属于目录页下的 Star-DART Base，而不是另一个分散的 Base。
 
 仪表盘至少包含：
 
@@ -387,6 +414,7 @@ lark-cli wiki +node-create \
 - 仓库清单没有遗漏本轮新增 Star。
 - 每个新增 Star 都有一个飞书子文档。
 - 每个子文档都创建在 `.env` 指定的飞书目录页下。
+- 飞书多维表格资产台账也是 `.env` 指定目录页下的 `bitable` 子节点。
 - 目录页正文已追加项目文档或周回顾 PPT 入口。
 - 每个子文档都符合 `references/doc_template.md` 的结构。
 - 飞书多维表格中每个新增 Star 都有一条记录。
