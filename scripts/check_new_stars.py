@@ -23,13 +23,14 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import datetime, time, timezone
 from pathlib import Path
 from typing import Any
 
 
 DEFAULT_POLL_INTERVAL_SECONDS = 3 * 60 * 60
 DEFAULT_LIMIT = 30
+DEFAULT_STARRED_SINCE = "2026-07-02"
 BASE_REPO_FIELD = "仓库名称"
 BASE_URL_FIELD = "GitHub URL"
 
@@ -219,6 +220,37 @@ def find_new_repos(stars: list[StarRepo], existing_keys: set[str]) -> list[StarR
     return new_repos
 
 
+def parse_since_datetime(value: str) -> datetime | None:
+    normalized = value.strip()
+    if not normalized:
+        return None
+    if len(normalized) == 10:
+        local_tz = datetime.now().astimezone().tzinfo
+        return datetime.combine(datetime.fromisoformat(normalized).date(), time.min, tzinfo=local_tz).astimezone(timezone.utc)
+    parsed = datetime.fromisoformat(normalized.replace("Z", "+00:00"))
+    if parsed.tzinfo is None:
+        return parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
+
+
+def parse_starred_at(value: str) -> datetime | None:
+    if not value:
+        return None
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        return parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
+
+
+def filter_repos_starred_since(stars: list[StarRepo], since: datetime | None) -> list[StarRepo]:
+    if since is None:
+        return stars
+    return [repo for repo in stars if (starred_at := parse_starred_at(repo.starred_at)) is not None and starred_at >= since]
+
+
 def repo_to_base_seed(repo: StarRepo) -> dict[str, Any]:
     now = datetime.now(timezone.utc).astimezone().strftime("%Y-%m-%d %H:%M:%S")
     source_user = env("GITHUB_USERNAME") or "配置的 GitHub 用户"
@@ -238,12 +270,14 @@ def repo_to_base_seed(repo: StarRepo) -> dict[str, Any]:
     }
 
 
-def render_markdown(new_repos: list[StarRepo], checked_count: int) -> str:
+def render_markdown(new_repos: list[StarRepo], checked_count: int, starred_since: str = "") -> str:
     poll_interval = env("STAR_DART_POLL_INTERVAL_SECONDS", str(DEFAULT_POLL_INTERVAL_SECONDS))
+    filter_line = f"- 演示筛选范围：仅处理本机时区 `{starred_since}` 起新增的 Star 仓库\n" if starred_since else ""
     if not new_repos:
         return (
             "# Star-DART 新增 Star 检查结果\n\n"
             f"- 检查最近 Star 数：{checked_count}\n"
+            f"{filter_line}"
             f"- 轮询周期：{poll_interval} 秒\n"
             "- 结果：本轮没有发现飞书多维表格中缺失的新增 Star 仓库。\n\n"
             "机制说明：本任务采用定时轮询，默认 3 小时，可由用户自行调整；"
@@ -254,6 +288,7 @@ def render_markdown(new_repos: list[StarRepo], checked_count: int) -> str:
         "# Star-DART 新增 Star 检查结果",
         "",
         f"- 检查最近 Star 数：{checked_count}",
+        *( [f"- 演示筛选范围：仅处理本机时区 `{starred_since}` 起新增的 Star 仓库"] if starred_since else [] ),
         f"- 新增待处理仓库：{len(new_repos)}",
         f"- 轮询周期：{poll_interval} 秒",
         "",
@@ -322,6 +357,11 @@ def load_sample(path: str) -> list[StarRepo]:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Check GitHub Stars against Feishu Base")
     parser.add_argument("--limit", type=int, default=None, help=f"检查最近 Star 数，默认读取 STAR_DART_POLL_LIMIT 或 {DEFAULT_LIMIT}")
+    parser.add_argument(
+        "--starred-since",
+        default=None,
+        help=f"只处理该时间之后 Star 的仓库，支持本机时区 YYYY-MM-DD 或 ISO 时间；默认读取 STAR_DART_STARRED_SINCE 或 {DEFAULT_STARRED_SINCE}",
+    )
     parser.add_argument("--sample", help="读取本地 GitHub Star 样例 JSON，不访问 GitHub")
     parser.add_argument("--existing-json", help="读取本地 Base record-list JSON，不调用 lark-cli；用于测试或演示")
     parser.add_argument("--json", action="store_true", help="输出机器可读 JSON，而不是 Markdown")
@@ -335,19 +375,25 @@ def main() -> int:
 
     limit = args.limit if args.limit is not None else int(env("STAR_DART_POLL_LIMIT", str(DEFAULT_LIMIT)))
     stars = load_sample(args.sample) if args.sample else fetch_recent_public_stars(env("GITHUB_USERNAME"), limit)
+    starred_since_value = args.starred_since if args.starred_since is not None else env("STAR_DART_STARRED_SINCE", DEFAULT_STARRED_SINCE)
+    starred_since = parse_since_datetime(starred_since_value)
+    filtered_stars = filter_repos_starred_since(stars, starred_since)
     if args.existing_json:
         existing_payload = json.loads(Path(args.existing_json).read_text(encoding="utf-8"))
         existing_keys = existing_repo_keys_from_payload(existing_payload)
     else:
         existing_keys = fetch_existing_repo_keys(env("STAR_DART_BASE_TOKEN"), env("STAR_DART_BASE_TABLE_ID"))
 
-    new_repos = find_new_repos(stars, existing_keys)
+    new_repos = find_new_repos(filtered_stars, existing_keys)
 
     if args.json:
         print(
             json.dumps(
                 {
                     "checked_count": len(stars),
+                    "filtered_count": len(filtered_stars),
+                    "starred_since": starred_since_value,
+                    "starred_since_utc": starred_since.isoformat() if starred_since else "",
                     "new_count": len(new_repos),
                     "new_repos": [repo.__dict__ for repo in new_repos],
                     "base_seed_records": [repo_to_base_seed(repo) for repo in new_repos],
@@ -357,7 +403,7 @@ def main() -> int:
             )
         )
     else:
-        print(render_markdown(new_repos, checked_count=len(stars)))
+        print(render_markdown(new_repos, checked_count=len(stars), starred_since=starred_since_value))
     return 0
 
 

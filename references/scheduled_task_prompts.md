@@ -13,12 +13,13 @@
 1. 不设置 systemd、launchd、Windows Task Scheduler 等系统级服务。
 2. 本任务采用办公小浣熊定时执行；GitHub Star 本身不会自动唤醒小浣熊。
 3. 所有敏感信息从当前 Skill 目录的 `.env` 读取，不要把 GitHub 用户名、飞书链接、Base token、table id 写进回复或 Skill 文档。
+4. 当前作为演示任务，仅处理本机时区 `.env` 中 `STAR_DART_STARRED_SINCE` 起新增的 Star 仓库；默认从 `2026-07-02` 开始。
 
 执行步骤：
 1. 进入 `office-raccoon-star-dart-skill` 目录。
 2. 运行 `python3 scripts/check_new_stars.py`。
 3. 如果脚本提示本轮没有新增 Star，只回复无新增，并说明轮询仍会按 `.env` 中的周期继续。
-4. 如果脚本输出“本轮新增 Star 仓库”，只处理脚本列出的新增仓库，不重复处理 Base 已有记录。
+4. 如果脚本输出“本轮新增 Star 仓库”，只处理脚本列出的新增仓库；不要处理 `2026-07-02` 之前 Star 的仓库，也不要重复处理 Base 已有记录。
 5. 对每个新增仓库，参考 `references/doc_template.md` 生成一份项目文档，重点说明项目定位、为什么值得 Star、核心亮点、技术结构、适用场景、快速开始、边界与待确认。
 6. 使用 `lark-cli` 在 `.env` 指定的飞书目录页下创建项目子文档。
 7. 在同一个飞书目录页正文追加项目文档入口。

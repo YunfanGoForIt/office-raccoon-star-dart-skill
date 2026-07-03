@@ -84,6 +84,7 @@ cp .env.example .env
 | `STAR_DART_BASE_DASHBOARD_ID` | 飞书多维表格仪表盘 id |
 | `STAR_DART_POLL_INTERVAL_SECONDS` | 轮询周期，默认 `10800` 秒 |
 | `STAR_DART_POLL_LIMIT` | 每次检查最近 Star 数，默认 `30` |
+| `STAR_DART_STARRED_SINCE` | 演示筛选起始日期，按本机时区理解，默认 `2026-07-02`；设为空可取消该筛选 |
 
 ## 本地演示
 
@@ -142,8 +143,9 @@ python3 scripts/check_new_stars.py
 1. 读取 `.env`。
 2. 调用 GitHub Star API。
 3. 通过 `lark-cli base +record-list` 读取飞书 Base 已有仓库。
-4. 对比仓库名称和 GitHub URL。
-5. 只输出飞书 Base 中缺失的新增仓库。
+4. 演示期只保留本机时区 `STAR_DART_STARRED_SINCE` 起新增的 Star 仓库。
+5. 对比仓库名称和 GitHub URL。
+6. 只输出飞书 Base 中缺失的新增仓库。
 
 脚本不会自行生成飞书文档、仪表盘或 PPT；这些动作由办公小浣熊按照 `SKILL.md` 和 `references/` 中的模板继续完成。
 

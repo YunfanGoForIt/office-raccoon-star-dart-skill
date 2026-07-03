@@ -11,3 +11,7 @@ _weekly_ppt_*.md
 .DS_Store
 __pycache__/
 .pytest_cache/
+
+*.png
+
+.tmp_*

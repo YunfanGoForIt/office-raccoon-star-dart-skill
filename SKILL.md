@@ -26,6 +26,7 @@ description: 在办公小浣熊中运行的 Star-DART OPC 专用 Skill。把 Git
 | `STAR_DART_BASE_DASHBOARD_ID` | Star-DART 仪表盘 ID；创建后写入 `.env`，便于更新看板 |
 | `STAR_DART_POLL_INTERVAL_SECONDS` | 轮询周期，默认 `10800`，即 3 小时 |
 | `STAR_DART_POLL_LIMIT` | 每次检查最近 Star 数，默认 `30` |
+| `STAR_DART_STARRED_SINCE` | 演示筛选起始日期，按本机时区理解，默认 `2026-07-02`；设为空可取消该筛选 |
 | `STAR_DART_WEEKLY_PPT_CRON` | 每周回顾 PPT 的计划时间说明，例如 `每周日 20:00` |
 
 ## 触发任务
@@ -56,8 +57,9 @@ python3 scripts/check_new_stars.py
 1. 读取 `.env`。
 2. 调用 GitHub 公共 Star API，获取 `${GITHUB_USERNAME}` 最近 Star。
 3. 用 `lark-cli base +record-list` 读取飞书 Base 中已有的 `仓库名称` 和 `GitHub URL`。
-4. 对比 GitHub Star 与 Base 台账，只输出 Base 中缺失的新增仓库。
-5. 把新增仓库渲染成办公小浣熊后续处理指令。
+4. 演示期只保留本机时区 `STAR_DART_STARRED_SINCE` 起新增的 Star 仓库；当前默认从 `2026-07-02` 起筛选。
+5. 对比 GitHub Star 与 Base 台账，只输出 Base 中缺失的新增仓库。
+6. 把新增仓库渲染成办公小浣熊后续处理指令。
 
 脚本不做的事：
 
@@ -121,6 +123,8 @@ python3 scripts/check_new_stars.py
 ```
 
 脚本已经完成 GitHub Star 抓取和飞书 Base 比对。后续只处理脚本输出的新增仓库，不要重复处理 Base 中已有记录。
+
+演示期默认只处理本机时区 `2026-07-02` 起新增的 Star 仓库；如需恢复全量最近 Star 检查，将 `.env` 中的 `STAR_DART_STARRED_SINCE` 设为空。
 
 ### 1. 生成仓库清单
 
