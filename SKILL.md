@@ -146,15 +146,20 @@ python3 scripts/check_new_stars.py
 
 ### 2. 为每个仓库生成项目文档
 
-每个仓库生成一份独立 Markdown 文档，内容参考 `references/doc_template.md`。
+每个仓库生成一份独立 Markdown 文档，内容严格参考 `references/doc_template.md`。默认产出应是 3 到 5 分钟可读完的中等详尽版，而不是几行简介。
 
 文档原则：
 
 - 不是翻译 README，而是提炼项目核心价值。
-- 必须说明项目定位、为什么值得 Star、核心亮点、技术结构、适用场景和快速开始。
+- 必须说明项目定位、为什么值得 Star、核心亮点、解决痛点、技术结构、架构图、值得借鉴的设计、核心特性、适用场景、快速开始、边界与待确认、相关资源。
 - README 或公开资料中没有的信息不要编造。
 - 技术术语、函数名、变量名、包名保留英文。
 - 标题格式：`{中文标题} - {owner/repo}`。
+- 开头不要写 YAML frontmatter；必须用“字段 / 内容”表格整理仓库、GitHub、技术方向、语言、Stars/Forks、License、Star 时间、生成时间。
+- 不要在文档末尾附加长篇 README 摘录或源码摘录；正文提炼到模板章节即可。
+- 不能只根据 GitHub description 写简版。生成前至少核验 GitHub API 元信息和 README；如果 README 指向关键 docs / getting-started / release，优先读取与快速开始和边界相关的部分。
+- 篇幅目标：约 1200 到 2200 个中文字；资料较少时可短一些，但每个模板章节都要有实质判断。
+- 技术结构章节默认插入 1 张架构图。飞书文档中不要写普通 Markdown ```mermaid 代码块；应使用 `<whiteboard type="mermaid">...</whiteboard>` 或 `<whiteboard type="svg">...</whiteboard>`。简单链路可用 Mermaid；分层架构、模块框图、复杂流程优先用 SVG/画板 DSL，确保读者 10 秒看懂系统结构。
 
 飞书写入前，必须先读取当前 `lark-cli` 内置文档规则：
 

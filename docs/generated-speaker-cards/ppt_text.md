@@ -1,0 +1,254 @@
+# PPT text extraction: Star-DART OPC 复赛路演 终稿.pptx
+
+- slides: 10
+
+## Slide 1
+- STAR-DART OPC · ROADSHOW
+- DATAWHALE · OFFICE RACCOON
+- ACTIVE TRIGGER · OPEN SOURCE KNOWLEDGE BASE
+- Star-DART
+- OPC
+- 把 GitHub Star 变成开源项目知识资产
+- Star  →  文档  →  台账  →  仪表盘  →  周 PPT
+- 主动触发
+- ，
+- 现在看懂，未来找回
+- ，
+- 随时复用
+- 梁宇凡
+- 复赛路演
+- · 2026.07
+
+## Slide 2
+- SCENE · 01 / 03
+- THE REAL PAIN
+- THE REAL PAIN
+- Star 越多，复用越少
+- 01 · FORGET
+- 收藏后遗忘
+- 点 Star 时觉得"以后用得上"，过几周只剩模糊印象，忘记项目亮点和适用范围。
+- 02 · SEARCH
+- 反复翻找
+- 真正需要时只能靠关键词翻找 GitHub Star 列表，项目越多越难命中目标。
+- 03 · REREAD
+- 重复理解
+- 找到以后还要重新读 README、示例、架构和边界说明。AI 编程时可能绕过已收藏的优秀实现。
+- STAR-DART 解决的不是"摘要"问题，而是"收藏如何变成可复用知识资产"的问题。
+
+## Slide 3
+- SCENE · 02 / 03
+- FROM COLLECTION TO ASSET
+- POSITIONING
+- 把"看过"变成"能用"
+- OLD
+- GITHUB STAR LIST
+- 链接堆积
+- 收藏动作完成后，知识链路停止在浏览器里。依赖个人记忆，缺少统一分类与标签。
+- NEW
+- STAR-DART OPC
+- 知识资产化
+- 每个新增 Star 都进入"理解、归档、索引、复用"的生产链路。
+- − 依赖个人记忆
+- − 缺少统一分类与标签
+- − 不能直接复用到学习、选题或汇报
+- − 结构化中文项目档案
+- − 飞书知识库与多维表格索引
+- − 看板、周报、PPT 持续沉淀
+
+## Slide 4
+- TECH · 01 / 03
+- THREE LAYERS
+- ARCHITECTURE
+- 三层产品架构
+- Star-DART 负责发现新增 Star 并标准化任务；办公小浣熊负责理解、生成和办公交付；知识库负责长期索引、找回与复用。
+- LAYER 01
+- Star-DART
+- 定时任务
+- 办公小浣熊定时任务触发GitHub
+- Star
+- API、状态快照
+- 和获取新增仓库信息
+- 。
+- LAYER 02
+- 办公小浣熊综合处理
+- 本地小浣熊
+- Claw
+- 结合打磨好的
+- Star-DART Skill
+- ，
+- 利用小浣熊专家团、research-synthesis，以及飞书链接插件
+- （
+- 飞书文档、多维表格、仪表盘生成
+- ）
+- 。
+- LAYER 03
+- 各类交付资产落库
+- 飞书知识库、多维表格、Base 仪表盘、周报和团队技术雷达。
+- 核心判断：这不是一个单点摘要脚本，而是一套把 GITHUB STAR 转化为个人开源知识库的持续运行系统。
+
+## Slide 5
+- TECH · 02 / 03
+- OFFICE RACCOON CORE
+- NOT A SINGLE PROMPT
+- 小浣熊不是被调用一次
+- AGENT
+- 本地
+- Claw
+- 定时任务
+- 接收 Star-DART 标准任务，读取仓库材料并保留执行上下文。
+- SKILL
+- 流程固化
+- 把"定位、亮点、架构、快速开始、边界"固化成可复用 Skill。
+- RESEARCH
+- 研究研判
+- 结合 README、DeepWiki、Release、Issue 和用户场景做价值判断。
+- DOCS
+- 高质量中文档案
+- 生成统一结构的中文项目文档，不是简单翻译。
+- DATA
+- 索引与看板
+- 写入多维表格字段，沉淀分类、标签、链接和复用等级。
+- PUBLISH
+- 持续发布
+- 输出 PPT、周报和技术雷达，把个人知识库转成可分享资产。
+
+## Slide 6
+- RESULT · 01 / 04
+- EFFICIENCY & USERS
+- DELIVERY MATRIX
+- 把重复整理动作交给小浣熊
+- 原手工
+- Star-DART OPC
+- 打开 GitHub Star 列表逐个检查
+- →
+- 定时任务输出新增仓库
+- 重新阅读 README 后写零散笔记
+- →
+- 小浣熊按统一模板生成项目档案
+- 手动维护 Excel
+- →
+- 飞书 Base 直接作为台账
+- 手动做统计图
+- →
+- 飞书 Base 仪表盘持续统计
+- 事后忘记本周看过什么
+- →
+- 每周 PPT 自动形成回顾材料
+- TARGET USERS
+- AI 编程用户 · 独立开发者 · 学生 / 科研新人 · 技术团队 · 技术内容创作者
+- CURRENT OUTPUTS
+- 飞书子文档
+- 每个仓库独立项目档案
+- 飞书多维表格
+- 资产台账与去重来源
+- Base 仪表盘
+- 分类分布与复用等级
+- 周 PPT 回顾
+- 每周新增 Star 记忆强化
+
+## Slide 7
+- RESULT · 02 / 04
+- CLOUD SERVICE
+- BUSINESS MODEL 01
+- 未来
+- ：
+- 从个人
+- Skill，升级为免部署的云端服务
+- 当前 Skill 模式
+- 云端订阅服务
+- 需配置 GitHub / 飞书 token
+- 用户
+- OAuth
+- 授权后即可使用
+- 需办公小浣熊或本地环境定时执行
+- 云端自动处理新增 Star
+- 适合个人和复赛演示
+- 适合不想部署的开发者、学生和团队
+- 输出进入个人飞书目录
+- 可同步到邮件、飞书或
+- Obsidian/Notion
+- 个人知识库
+- PRODUCT TIERS
+- 个人版
+- 订阅自己的 GitHub Star，每次新增自动推送项目档案
+- 团队版
+- 汇总共享团队成员
+- Star，形成团队开源项目资产池
+- 知识库版
+- 云端构建专属项目知识库，支持同步到飞书和公开 CDN
+
+## Slide 8
+- RESULT · 03 / 04
+- MCP / SKILLS NETWORK
+- BUSINESS MODEL 02
+- 未来
+- ：
+- 让
+- AI 编程开工前，先查询用户收藏过的好项目
+- MCP
+- Star-DART MCP
+- Codex / Claude Code 开始项目时，先检索用户专属开源项目库
+- SKILLS
+- Star-DART Skills
+- 把项目档案转成可复用的 Agent / Skill 构建参考
+- INDEX
+- 统一优质项目库
+- 汇总多用户 Star 行为，形成"用脚投票"的高质量开源项目索引
+- SEARCH
+- AI 搜索增强
+- 缓解 GitHub
+- 搜索困难模糊、AI
+- 推荐项目良莠不齐的问题
+- 。
+- 让
+- AI
+- 优先看到那些用户“ 用脚投票 ”出来的项目。
+- GROWTH PATH
+- 个人知识库
+- 团队技术雷达
+- 云端订阅服务
+- MCP 检索网络
+
+## Slide 9
+- DEMO · 01 / 01
+- LIVE DEMONSTRATION
+- RECORDED VIDEO
+- 3 分钟视频展示完整闭环
+- 点击播放录制视频
+- VIDEO FLOW
+- 01  GitHub Star 触发
+- 用户在 GitHub 收藏一个新仓库
+- 02  办公小浣熊执行
+- 定时任务运行脚本，发现 Base 中尚未入库的新增仓库
+- 03  项目文档生成
+- 小浣熊生成项目定位、核心亮点、技术结构和使用建议
+- 04  飞书资产入库
+- 项目文档、Base 台账、仪表盘和周回顾 PPT 沉淀在同一目录
+
+## Slide 10
+- 11 / 11
+- ENDING
+- WHY
+- STAR-DART
+- 主动触发
+- ，
+- 现在看懂，未来找回
+- ，
+- 随时复用
+- 用真实场景、清晰技术闭环和可演示产物证明办公小浣熊的价值。
+- "不是让人多收藏一个项目，而是让每一次收藏都变成未来可以找回、判断和复用的开源资产。"
+- 梁宇凡
+- 2026.07
+- 维度
+- 对齐方式
+- 场景洞察
+- GitHub Star 收藏后遗忘、难复用，是开发者和 AI 编程用户的真实高频痛点
+- 技术方案
+- 基于办公小浣熊定时任务、Python 脚本、lark-cli、飞书文档、Base、仪表盘和 Slides 串成闭环
+- 当前成果
+- 已有 Skill 仓库、样例、测试、飞书 Base / 仪表盘、定时任务 Prompt 和录制视频演示路径
+- 商业价值
+- 当前先验证个人办公闭环，后续可拓展为云端订阅、MCP / Skills 和优质开源项目知识网络
+- 作品演示
+- 录制视频展示新增 Star 从发现到飞书入库，再到周 PPT 回顾
+- END · STAR-DART OPC

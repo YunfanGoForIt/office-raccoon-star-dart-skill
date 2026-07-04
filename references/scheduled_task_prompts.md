@@ -20,7 +20,11 @@
 2. 运行 `python3 scripts/check_new_stars.py`。
 3. 如果脚本提示本轮没有新增 Star，只回复无新增，并说明轮询仍会按 `.env` 中的周期继续。
 4. 如果脚本输出“本轮新增 Star 仓库”，只处理脚本列出的新增仓库；不要处理 `2026-07-02` 之前 Star 的仓库，也不要重复处理 Base 已有记录。
-5. 对每个新增仓库，参考 `references/doc_template.md` 生成一份项目文档，重点说明项目定位、为什么值得 Star、核心亮点、技术结构、适用场景、快速开始、边界与待确认。
+5. 对每个新增仓库，参考 `references/doc_template.md` 生成一份中等详尽项目文档，重点说明项目定位、为什么值得 Star、核心亮点、解决痛点、技术结构、架构图、值得借鉴的设计、核心特性、适用场景、快速开始、边界与待确认、相关资源。不要只写几行简版；目标是 3 到 5 分钟可读完。
+   - 生成前至少核验 GitHub API 元信息和 README，不要只根据仓库 description 写。
+   - 文档开头必须用“字段 / 内容”表格，不要使用 YAML frontmatter。
+   - 不要在文档末尾附加长篇 README 摘录或源码摘录。
+   - 技术结构章节默认插入 1 张架构图。飞书文档中不要写普通 Markdown ```mermaid 代码块；应使用 `<whiteboard type="mermaid">...</whiteboard>` 或 `<whiteboard type="svg">...</whiteboard>`。简单链路可用 Mermaid；分层架构、模块框图、复杂流程优先用 SVG/画板 DSL。
 6. 使用 `lark-cli` 在 `.env` 指定的飞书目录页下创建项目子文档。
 7. 在同一个飞书目录页正文追加项目文档入口。
 8. 确认 `.env` 指定的飞书多维表格资产台账是目录页下的 `bitable` 子节点；如果不在目录页下，先使用 `lark-cli wiki +move` 迁入，或在目录页下新建。
